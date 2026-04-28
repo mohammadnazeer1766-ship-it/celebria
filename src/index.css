@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply antialiased;
+    }
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Premium Background Pattern */
+.bg-pattern {
+    background-image: radial-gradient(#64748b 0.5px, transparent 0.5px);
+    background-size: 24px 24px;
+}
+
+.dark .bg-pattern {
+    background-image: radial-gradient(#1e293b 0.5px, transparent 0.5px);
+}
