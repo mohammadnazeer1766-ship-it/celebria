@@ -26,3 +26,22 @@
 .dark .bg-pattern {
     background-image: radial-gradient(#1e293b 0.5px, transparent 0.5px);
 }
+
+/* Colorful Animated Background Theme */
+@keyframes meshGradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.bg-mesh-light {
+    background: linear-gradient(-45deg, #ff9a9e, #fecfef, #a1c4fd, #c2e9fb);
+    background-size: 400% 400%;
+    animation: meshGradient 15s ease infinite;
+}
+
+.bg-mesh-dark {
+    background: linear-gradient(-45deg, #0f172a, #1e1b4b, #312e81, #4c1d95);
+    background-size: 400% 400%;
+    animation: meshGradient 15s ease infinite;
+}

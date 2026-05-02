@@ -39,32 +39,38 @@ function App() {
       <AuthProvider>
         <CityProvider>
           <Router>
-            <div className="font-sans text-gray-900 dark:text-gray-100 bg-white dark:bg-gray-900 min-h-screen transition-colors duration-300 relative">
-              <Navbar />
-              <PromoBanner />
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/birthday" element={<BirthdayPage />} />
-                <Route path="/birthday/:categoryId" element={<DecorationCategoryDetails />} />
-                <Route path="/festival" element={<FestivalPage />} />
-                <Route path="/festival/:categoryId" element={<DecorationCategoryDetails />} />
-                <Route path="/corporate" element={<CorporatePage />} />
-                <Route path="/corporate/:categoryId" element={<DecorationCategoryDetails />} />
+            <div className="font-sans text-gray-900 dark:text-gray-100 bg-mesh-light dark:bg-mesh-dark min-h-screen transition-colors duration-300 relative">
+              {/* Glassmorphism Overlay */}
+              <div className="absolute inset-0 bg-white/40 dark:bg-black/40 backdrop-blur-[2px] pointer-events-none" style={{ zIndex: 0 }}></div>
+              
+              {/* Content Wrapper */}
+              <div className="relative" style={{ zIndex: 1 }}>
+                <Navbar />
+                <PromoBanner />
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/birthday" element={<BirthdayPage />} />
+                  <Route path="/birthday/:categoryId" element={<DecorationCategoryDetails />} />
+                  <Route path="/festival" element={<FestivalPage />} />
+                  <Route path="/festival/:categoryId" element={<DecorationCategoryDetails />} />
+                  <Route path="/corporate" element={<CorporatePage />} />
+                  <Route path="/corporate/:categoryId" element={<DecorationCategoryDetails />} />
 
-                <Route path="/occasions" element={<OccasionsPage />} />
-                <Route path="/occasions/:categoryId" element={<DecorationCategoryDetails />} />
-                <Route path="/toys-gifts" element={<ToysAndGiftsPage />} />
-                <Route path="/toys-gifts/:categoryId" element={<DecorationCategoryDetails />} />
-                <Route path="/decorations/:categoryId" element={<DecorationCategoryDetails />} />
-                <Route path="/decorations" element={<DecorationsPage />} />
-                <Route path="/search" element={<SearchPage />} />
-                <Route path="/contact" element={<PlaceholderPage title="Contact Us" />} />
-                <Route path="/faq" element={<PlaceholderPage title="Frequently Asked Questions" />} />
-              </Routes>
-              <Footer />
+                  <Route path="/occasions" element={<OccasionsPage />} />
+                  <Route path="/occasions/:categoryId" element={<DecorationCategoryDetails />} />
+                  <Route path="/toys-gifts" element={<ToysAndGiftsPage />} />
+                  <Route path="/toys-gifts/:categoryId" element={<DecorationCategoryDetails />} />
+                  <Route path="/decorations/:categoryId" element={<DecorationCategoryDetails />} />
+                  <Route path="/decorations" element={<DecorationsPage />} />
+                  <Route path="/search" element={<SearchPage />} />
+                  <Route path="/contact" element={<PlaceholderPage title="Contact Us" />} />
+                  <Route path="/faq" element={<PlaceholderPage title="Frequently Asked Questions" />} />
+                </Routes>
+                <Footer />
 
-              <FloatingActions onRequestCallback={() => setIsCallbackModalOpen(true)} />
-              <CallbackModal isOpen={isCallbackModalOpen} onClose={() => setIsCallbackModalOpen(false)} />
+                <FloatingActions onRequestCallback={() => setIsCallbackModalOpen(true)} />
+                <CallbackModal isOpen={isCallbackModalOpen} onClose={() => setIsCallbackModalOpen(false)} />
+              </div>
             </div>
           </Router>
         </CityProvider>
