@@ -10,20 +10,17 @@ const SearchPage = () => {
 
     const [searchQuery, setSearchQuery] = useState(initialQuery);
     const [results, setResults] = useState([]);
-    const [isSearching, setIsSearching] = useState(false);
+
+    const handleSearch = (query) => {
+        const filtered = searchItems(query);
+        setResults(filtered);
+    };
 
     useEffect(() => {
         if (initialQuery) {
             handleSearch(initialQuery);
         }
     }, [initialQuery]);
-
-    const handleSearch = (query) => {
-        setIsSearching(true);
-        const filtered = searchItems(query);
-        setResults(filtered);
-        setIsSearching(false);
-    };
 
     const onInputChange = (e) => {
         setSearchQuery(e.target.value);
