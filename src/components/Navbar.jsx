@@ -40,6 +40,7 @@ const Navbar = () => {
     };
 
     const navCategories = [
+        { name: "Home", hasDropdown: false, color: "bg-orange-500" },
         { name: "Birthday", hasDropdown: false, color: "bg-celebration-red" },
         { name: "Decorations", hasDropdown: true, color: "bg-celebration-blue" },
         { name: "Corporate Planner", hasDropdown: true, color: "bg-celebration-purple" },

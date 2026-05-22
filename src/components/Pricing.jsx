@@ -25,7 +25,6 @@ const Pricing = () => {
                                     Most Popular
                                 </div>
                             )}
-
                             <div className="p-8">
                                 <div className="flex items-center gap-2 mb-4">
                                     <Star className={`w-5 h-5 ${index === 1 ? 'text-secondary font-fill' : 'text-gray-300'}`} fill={index === 1 ? "currentColor" : "none"} />

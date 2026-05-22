@@ -26,3 +26,10 @@ dist-ssr
 # Custom ignores
 build_log.txt
 desktop.ini
+
+# Python / Backend
+venv/
+__pycache__/
+*.pyc
+*.db
+.env

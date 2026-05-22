@@ -1,12 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { decorationCategories } from '../data/mockData';
+import FunkyBackground from '../components/FunkyBackground';
 
 const DecorationsPage = () => {
     return (
-        <div className="bg-white dark:bg-gray-900 min-h-screen pb-20 pt-12 transition-colors duration-300">
-            <div className="container mx-auto px-4 py-8">
-                <h1 className="text-2xl md:text-3xl font-medium text-center text-gray-800 dark:text-gray-100 mb-12">
+        <div className="relative min-h-screen pb-20 pt-12 transition-colors duration-300 overflow-hidden">
+            <FunkyBackground />
+            <div className="container mx-auto px-4 py-8 relative z-10">
+                <h1 className="text-2xl md:text-3xl font-black text-center text-gray-900 dark:text-white mb-12 drop-shadow-md">
                     Event Decoration Services for All Your Events in Hyderabad
                 </h1>
 

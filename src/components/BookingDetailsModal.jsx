@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Star, Check, Info, ChevronDown, ChevronUp, Calendar, Clock, Phone, User, MapPin, ShoppingCart, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -18,29 +18,88 @@ const AccordionItem = ({ title, children, isOpen, onClick }) => (
             )}
         </button>
         <AnimatePresence>
-            {isOpen && (
-                <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3, ease: 'easeInOut' }}
-                    className="overflow-hidden"
-                >
-                    <div className="pb-6 pt-2 text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
-                        {children}
-                    </div>
-                </motion.div>
-            )}
+            {
+                isOpen && (
+                    <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.3, ease: 'easeInOut' }}
+                        className="overflow-hidden"
+                    >
+                        <div className="pb-6 pt-2 text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
+                            {children}
+                        </div>
+                    </motion.div>
+                )
+            }
         </AnimatePresence>
     </div>
 );
 
 const BookingDetailsModal = ({ isOpen, onClose, product }) => {
     const [openAccordion, setOpenAccordion] = useState('Inclusions');
-    const [pincode, setPincode] = useState('');
-    const [mobile, setMobile] = useState('');
+    const [enquiryName, setEnquiryName] = useState('');
+    const [enquiryEmail, setEnquiryEmail] = useState('');
+    const [enquiryMobile, setEnquiryMobile] = useState('');
+    const [partyDate, setPartyDate] = useState('');
+    const [partyTime, setPartyTime] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [bookingCount, setBookingCount] = useState(0);
+
+    useEffect(() => {
+        if (isOpen) {
+            fetch('/api/bookings/count')
+                .then(res => res.json())
+                .then(data => setBookingCount(data.count))
+                .catch(err => console.error('Error fetching count:', err));
+        }
+    }, [isOpen]);
 
     if (!isOpen || !product) return null;
+
+    const handleEnquirySubmit = async () => {
+        if (!enquiryName || !enquiryMobile || !enquiryEmail || !partyDate || !partyTime) {
+            alert('Please fill all fields');
+            return;
+        }
+        setIsSubmitting(true);
+        try {
+            const response = await fetch('/api/book', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    name: enquiryName,
+                    email: enquiryEmail,
+                    mobile: enquiryMobile,
+                    party_date: partyDate,
+                    party_time: partyTime,
+                    product_name: product.title || product.name,
+                    price: String(product.price)
+                }),
+            });
+
+            if (response.ok) {
+                alert('Booking successful!');
+                setEnquiryName('');
+                setEnquiryEmail('');
+                setEnquiryMobile('');
+                setPartyDate('');
+                setPartyTime('');
+                setBookingCount(prev => prev + 1);
+                onClose();
+            } else {
+                alert('Booking failed. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error submitting booking:', error);
+            alert('An error occurred. Please check your connection.');
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     const renderStars = (rating) => {
         return (
@@ -98,6 +157,11 @@ const BookingDetailsModal = ({ isOpen, onClose, product }) => {
                                 <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white leading-tight">
                                     {product.title || product.name} - Hyderabad
                                 </h2>
+                                {bookingCount > 0 && (
+                                    <div className="inline-block bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 px-3 py-1 rounded-full text-sm font-bold w-fit">
+                                        🔥 {bookingCount} people have booked a decoration!
+                                    </div>
+                                )}
                                 <div className="flex items-center gap-3">
                                     <span className="text-3xl font-bold text-gray-900 dark:text-white">₹{product.price}</span>
                                     {product.originalPrice && (
@@ -109,32 +173,7 @@ const BookingDetailsModal = ({ isOpen, onClose, product }) => {
                                 </div>
                             </div>
 
-                            {/* Service Availability Box */}
-                            <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl p-6 space-y-4">
-                                <p className="text-gray-500 dark:text-gray-400 font-medium h-10 flex items-center">
-                                    Provide the required details to check your service availability
-                                </p>
-                                <div className="space-y-3">
-                                    <div className="relative">
-                                        <input
-                                            type="text"
-                                            placeholder="Enter your pincode"
-                                            className="w-full bg-white dark:bg-gray-700 py-3.5 px-5 rounded-xl border border-transparent focus:border-blue-500 outline-none transition-all font-medium"
-                                            value={pincode}
-                                            onChange={(e) => setPincode(e.target.value)}
-                                        />
-                                    </div>
-                                    <div className="relative">
-                                        <input
-                                            type="text"
-                                            placeholder="Enter your mobile no"
-                                            className="w-full bg-white dark:bg-gray-700 py-3.5 px-5 rounded-xl border border-transparent focus:border-blue-500 outline-none transition-all font-medium"
-                                            value={mobile}
-                                            onChange={(e) => setMobile(e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
+
 
                             {/* Action Buttons */}
                             <div className="flex flex-col sm:flex-row gap-4">
@@ -158,11 +197,22 @@ const BookingDetailsModal = ({ isOpen, onClose, product }) => {
                                         type="text"
                                         placeholder="Enter your name"
                                         className="bg-white dark:bg-gray-700 py-3.5 px-5 rounded-xl outline-none font-medium"
+                                        value={enquiryName}
+                                        onChange={(e) => setEnquiryName(e.target.value)}
+                                    />
+                                    <input
+                                        type="email"
+                                        placeholder="Enter your email"
+                                        className="bg-white dark:bg-gray-700 py-3.5 px-5 rounded-xl outline-none font-medium"
+                                        value={enquiryEmail}
+                                        onChange={(e) => setEnquiryEmail(e.target.value)}
                                     />
                                     <input
                                         type="text"
                                         placeholder="Enter your mobile no"
                                         className="bg-white dark:bg-gray-700 py-3.5 px-5 rounded-xl outline-none font-medium"
+                                        value={enquiryMobile}
+                                        onChange={(e) => setEnquiryMobile(e.target.value)}
                                     />
                                     <input
                                         type="text"
@@ -170,6 +220,8 @@ const BookingDetailsModal = ({ isOpen, onClose, product }) => {
                                         className="bg-white dark:bg-gray-700 py-3.5 px-5 rounded-xl outline-none font-medium"
                                         onFocus={(e) => (e.target.type = 'date')}
                                         onBlur={(e) => (e.target.type = 'text')}
+                                        value={partyDate}
+                                        onChange={(e) => setPartyDate(e.target.value)}
                                     />
                                     <input
                                         type="text"
@@ -177,11 +229,17 @@ const BookingDetailsModal = ({ isOpen, onClose, product }) => {
                                         className="bg-white dark:bg-gray-700 py-3.5 px-5 rounded-xl outline-none font-medium"
                                         onFocus={(e) => (e.target.type = 'time')}
                                         onBlur={(e) => (e.target.type = 'text')}
+                                        value={partyTime}
+                                        onChange={(e) => setPartyTime(e.target.value)}
                                     />
                                 </div>
                                 <div className="flex justify-center">
-                                    <button className="bg-[#e03a3a] hover:bg-red-700 text-white font-bold py-3 px-12 rounded-xl text-lg transition-colors">
-                                        Submit
+                                    <button
+                                        onClick={handleEnquirySubmit}
+                                        disabled={isSubmitting}
+                                        className="bg-[#e03a3a] hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-12 rounded-xl text-lg transition-colors"
+                                    >
+                                        {isSubmitting ? 'Submitting...' : 'Submit'}
                                     </button>
                                 </div>
                             </div>
@@ -281,27 +339,7 @@ const BookingDetailsModal = ({ isOpen, onClose, product }) => {
                                         className="w-full h-full object-cover"
                                     />
                                 </div>
-                                <div className="space-y-4">
-                                    <h4 className="text-xl font-bold">Recommended Add-Ons</h4>
-                                    <div className="flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
-                                        {['Entrance Arch', 'Cake Tables', 'Foil Balloons'].map(tab => (
-                                            <button key={tab} className="whitespace-nowrap px-4 py-2 rounded-lg bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 border text-sm font-medium hover:border-blue-500 transition-colors">
-                                                {tab}
-                                            </button>
-                                        ))}
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        {[1, 2].map(i => (
-                                            <div key={i} className="bg-white dark:bg-gray-800 p-2 rounded-xl shadow-sm space-y-2 group cursor-pointer">
-                                                <div className="aspect-square rounded-lg overflow-hidden">
-                                                    <img src={`https://images.unsplash.com/photo-1530103043960-ef38714abb15?auto=format&fit=crop&q=80&w=200&u=${i}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="addon" />
-                                                </div>
-                                                <p className="text-xs font-bold truncate">Balloon Arch Variant {i}</p>
-                                                <p className="text-blue-500 font-bold text-xs">₹499</p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
+
                             </div>
                         </div>
                     </div>

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import PromoBanner from './components/PromoBanner';
@@ -15,6 +16,7 @@ import DecorationsPage from './pages/DecorationsPage';
 import ToysAndGiftsPage from './pages/ToysAndGiftsPage';
 import DecorationCategoryDetails from './pages/DecorationCategoryDetails';
 import SearchPage from './pages/SearchPage';
+import AdminBookings from './pages/AdminBookings';
 
 
 // Placeholder components for other routes
@@ -33,6 +35,18 @@ import { CityProvider } from './context/CityContext';
 
 function App() {
   const [isCallbackModalOpen, setIsCallbackModalOpen] = useState(false);
+  const [backendMessage, setBackendMessage] = useState('');
+
+  useEffect(() => {
+    axios.get('/api/hello')
+      .then(response => {
+        setBackendMessage(response.data.message);
+      })
+      .catch(error => {
+        console.error("Error fetching backend:", error);
+        setBackendMessage("Backend disconnected");
+      });
+  }, []);
 
   return (
     <ThemeProvider>
@@ -45,6 +59,11 @@ function App() {
               
               {/* Content Wrapper */}
               <div className="relative" style={{ zIndex: 1 }}>
+                {backendMessage && (
+                  <div className="bg-indigo-600 text-white text-center py-2 px-4 text-sm font-medium shadow-md">
+                    Python Backend Status: {backendMessage}
+                  </div>
+                )}
                 <Navbar />
                 <PromoBanner />
                 <Routes>
@@ -63,6 +82,7 @@ function App() {
                   <Route path="/decorations/:categoryId" element={<DecorationCategoryDetails />} />
                   <Route path="/decorations" element={<DecorationsPage />} />
                   <Route path="/search" element={<SearchPage />} />
+                  <Route path="/admin" element={<AdminBookings />} />
                   <Route path="/contact" element={<PlaceholderPage title="Contact Us" />} />
                   <Route path="/faq" element={<PlaceholderPage title="Frequently Asked Questions" />} />
                 </Routes>
